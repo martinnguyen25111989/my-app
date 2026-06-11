@@ -1,0 +1,57 @@
+html, body { height: 100%; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+  --bg-color: #fafafa;
+  --card-bg: #ffffff;
+  --text-color: rgba(0, 0, 0, 0.87);
+  --income-color: #2e7d32;
+  --expense-color: #c62828;
+}
+
+body.dark-theme {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --text-color: rgba(255, 255, 255, 0.87);
+  background: var(--bg-color);
+  color: var(--text-color);
+
+  // Material overrides cơ bản cho dark mode
+  .mat-mdc-card, .mat-mdc-dialog-surface, mat-sidenav, mat-toolbar.app-toolbar {
+    background: var(--card-bg) !important;
+    color: var(--text-color);
+  }
+  .mat-mdc-table { background: var(--card-bg); }
+  .mat-mdc-cell, .mat-mdc-header-cell, .mat-mdc-card-title, .mat-mdc-card-subtitle,
+  .mat-mdc-list-item, h1, h2, h3, p { color: var(--text-color); }
+  mat-sidenav-container { background: var(--bg-color); }
+}
+
+body { background: var(--bg-color); }
+
+.page-container { padding: 16px; max-width: 1200px; margin: 0 auto; }
+.income { color: var(--income-color); font-weight: 500; }
+.expense { color: var(--expense-color); font-weight: 500; }
+.spacer { flex: 1 1 auto; }
+.full-width { width: 100%; }
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 800px) {
+  .chart-grid { grid-template-columns: 1fr; }
+  .page-container { padding: 8px; }
+}
+
+table.mat-mdc-table { width: 100%; }
+.table-card { overflow-x: auto; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 12px; }
