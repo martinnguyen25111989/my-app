@@ -1,0 +1,1 @@
+var r=(e=>(e[e.Income=1]="Income",e[e.Expense=2]="Expense",e))(r||{});var t={1:"Ti\u1EC1n m\u1EB7t",2:"Ng\xE2n h\xE0ng",3:"Momo",4:"ZaloPay",5:"Th\u1EBB t\xEDn d\u1EE5ng",99:"Kh\xE1c"};export{r as a,t as b};
