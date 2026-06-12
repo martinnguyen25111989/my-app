@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import {
-  AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject, signal
+  AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, effect, inject, signal
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { Chart, registerables } from 'chart.js';
 import { AiService, DashboardService } from '../../core/api.services';
+import { ThemeService } from '../../core/theme.service';
 import { Dashboard, WALLET_TYPE_LABELS } from '../../core/models';
 
 Chart.register(...registerables);
@@ -54,22 +55,31 @@ Chart.register(...registerables);
       }
 
       <div class="summary-cards">
-        <mat-card>
+        <mat-card class="summary-card">
           <mat-card-content>
-            <div class="summary-label"><mat-icon class="income">trending_up</mat-icon> Tổng thu tháng</div>
-            <div class="summary-value income">{{ data()?.totalIncome | currency:'VND':'symbol':'1.0-0' }}</div>
+            <div class="icon-chip income-chip"><mat-icon>trending_up</mat-icon></div>
+            <div>
+              <div class="summary-label">Tổng thu tháng</div>
+              <div class="summary-value income">{{ data()?.totalIncome | currency:'VND':'symbol':'1.0-0' }}</div>
+            </div>
           </mat-card-content>
         </mat-card>
-        <mat-card>
+        <mat-card class="summary-card">
           <mat-card-content>
-            <div class="summary-label"><mat-icon class="expense">trending_down</mat-icon> Tổng chi tháng</div>
-            <div class="summary-value expense">{{ data()?.totalExpense | currency:'VND':'symbol':'1.0-0' }}</div>
+            <div class="icon-chip expense-chip"><mat-icon>trending_down</mat-icon></div>
+            <div>
+              <div class="summary-label">Tổng chi tháng</div>
+              <div class="summary-value expense">{{ data()?.totalExpense | currency:'VND':'symbol':'1.0-0' }}</div>
+            </div>
           </mat-card-content>
         </mat-card>
-        <mat-card>
+        <mat-card class="summary-card">
           <mat-card-content>
-            <div class="summary-label"><mat-icon>account_balance</mat-icon> Số dư hiện tại</div>
-            <div class="summary-value">{{ data()?.balance | currency:'VND':'symbol':'1.0-0' }}</div>
+            <div class="icon-chip balance-chip"><mat-icon>account_balance</mat-icon></div>
+            <div>
+              <div class="summary-label">Số dư hiện tại</div>
+              <div class="summary-value">{{ data()?.balance | currency:'VND':'symbol':'1.0-0' }}</div>
+            </div>
           </mat-card-content>
         </mat-card>
       </div>
@@ -126,20 +136,43 @@ Chart.register(...registerables);
     </div>
   `,
   styles: [`
-    .summary-label { display: flex; align-items: center; gap: 8px; color: gray; font-size: 14px; }
-    .summary-value { font-size: 26px; font-weight: 600; margin-top: 8px; }
+    .summary-card mat-card-content {
+      display: flex; align-items: center; gap: 16px; padding: 20px;
+    }
+    .icon-chip {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .income-chip { background: rgba(76, 175, 80, 0.16); color: var(--income-color); }
+    .expense-chip { background: rgba(244, 67, 54, 0.14); color: var(--expense-color); }
+    .balance-chip { background: rgba(33, 150, 243, 0.14); color: #1e88e5; }
+    .summary-label { color: var(--text-muted); font-size: 14px; }
+    .summary-value { font-size: 24px; font-weight: 600; margin-top: 4px; white-space: nowrap; }
     .budget-alert {
       display: flex; align-items: center; gap: 8px;
-      background: #fff3e0; color: #e65100; border-left: 4px solid #fb8c00;
-      padding: 10px 16px; border-radius: 4px; margin-bottom: 12px;
+      background: rgba(251, 140, 0, 0.14); color: #fb8c00;
+      border-left: 4px solid #fb8c00;
+      padding: 10px 16px; border-radius: 8px; margin-bottom: 12px;
     }
-    .budget-alert.exceeded { background: #ffebee; color: #b71c1c; border-color: #c62828; }
-    h1 { margin: 0; }
+    .budget-alert.exceeded {
+      background: rgba(229, 57, 53, 0.14); color: var(--expense-color);
+      border-color: var(--expense-color);
+    }
+    h1 { margin: 0; font-size: 26px; font-weight: 600; }
   `]
 })
 export class DashboardComponent implements AfterViewInit, OnDestroy {
   private dashboardService = inject(DashboardService);
   private aiService = inject(AiService);
+  private theme = inject(ThemeService);
+
+  // Vẽ lại biểu đồ khi có dữ liệu mới hoặc đổi sáng/tối
+  private chartEffect = effect(() => {
+    const data = this.data();
+    this.theme.isDark();
+    if (data && this.barChartRef) this.renderCharts(data);
+  });
 
   @ViewChild('barChart') barChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('doughnutChart') doughnutChartRef!: ElementRef<HTMLCanvasElement>;
@@ -160,10 +193,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   load(): void {
-    this.dashboardService.get(this.month, this.year).subscribe(data => {
-      this.data.set(data);
-      this.renderCharts(data);
-    });
+    this.dashboardService.get(this.month, this.year).subscribe(data => this.data.set(data));
     this.aiService.insights(this.month, this.year).subscribe(insights => this.insights.set(insights));
   }
 
@@ -171,16 +201,29 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     this.barChart?.destroy();
     this.doughnutChart?.destroy();
 
+    const styles = getComputedStyle(document.body);
+    const textColor = styles.getPropertyValue('--text-color').trim() || '#333';
+    const incomeColor = styles.getPropertyValue('--income-color').trim() || '#2e7d32';
+    const expenseColor = styles.getPropertyValue('--expense-color').trim() || '#c62828';
+    const gridColor = 'rgba(128, 128, 128, 0.15)';
+
     this.barChart = new Chart(this.barChartRef.nativeElement, {
       type: 'bar',
       data: {
         labels: data.monthlyChart.map(p => `T${p.month}/${p.year}`),
         datasets: [
-          { label: 'Thu nhập', data: data.monthlyChart.map(p => p.income), backgroundColor: '#2e7d32' },
-          { label: 'Chi tiêu', data: data.monthlyChart.map(p => p.expense), backgroundColor: '#c62828' }
+          { label: 'Thu nhập', data: data.monthlyChart.map(p => p.income), backgroundColor: incomeColor, borderRadius: 6 },
+          { label: 'Chi tiêu', data: data.monthlyChart.map(p => p.expense), backgroundColor: expenseColor, borderRadius: 6 }
         ]
       },
-      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: textColor } } },
+        scales: {
+          x: { ticks: { color: textColor }, grid: { display: false } },
+          y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } }
+        }
+      }
     });
 
     this.doughnutChart = new Chart(this.doughnutChartRef.nativeElement, {
@@ -189,10 +232,15 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         labels: data.topExpenseCategories.map(c => c.categoryName),
         datasets: [{
           data: data.topExpenseCategories.map(c => c.total),
-          backgroundColor: data.topExpenseCategories.map(c => c.color)
+          backgroundColor: data.topExpenseCategories.map(c => c.color),
+          borderWidth: 0
         }]
       },
-      options: { responsive: true }
+      options: {
+        responsive: true,
+        cutout: '60%',
+        plugins: { legend: { position: 'bottom', labels: { color: textColor } } }
+      }
     });
   }
 

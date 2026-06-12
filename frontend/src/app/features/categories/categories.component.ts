@@ -53,7 +53,7 @@ const ICONS = ['category', 'restaurant', 'directions_car', 'shopping_cart', 'rec
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Hủy</button>
-      <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">Lưu</button>
+      <button mat-flat-button (click)="save()" [disabled]="form.invalid">Lưu</button>
     </mat-dialog-actions>
   `,
   styles: ['.dialog-form { display: flex; flex-direction: column; gap: 12px; min-width: 300px; padding-top: 8px; }']
@@ -91,7 +91,7 @@ export class CategoryDialogComponent {
       <div class="filter-row">
         <h1>Danh mục thu chi</h1>
         <span class="spacer"></span>
-        <button mat-raised-button color="primary" (click)="openDialog()">
+        <button mat-flat-button (click)="openDialog()">
           <mat-icon>add</mat-icon> Thêm danh mục
         </button>
       </div>

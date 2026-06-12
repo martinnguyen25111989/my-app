@@ -16,9 +16,12 @@ export interface ConfirmDialogData {
     <mat-dialog-content>{{ data.message }}</mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Hủy</button>
-      <button mat-raised-button color="warn" [mat-dialog-close]="true">Xóa</button>
+      <button mat-flat-button class="danger-btn" [mat-dialog-close]="true">Xóa</button>
     </mat-dialog-actions>
-  `
+  `,
+  styles: [`
+    .danger-btn { --mdc-filled-button-container-color: #c62828; --mdc-filled-button-label-text-color: #fff; }
+  `]
 })
 export class ConfirmDialogComponent {
   data = inject<ConfirmDialogData>(MAT_DIALOG_DATA);

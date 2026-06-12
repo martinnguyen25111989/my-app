@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, map, shareReplay } from 'rxjs';
@@ -26,11 +26,14 @@ import { ThemeService } from '../../core/theme.service';
       <mat-sidenav #drawer class="sidenav" fixedInViewport
                    [mode]="(isHandset$ | async) ? 'over' : 'side'"
                    [opened]="(isHandset$ | async) === false">
-        <mat-toolbar class="app-toolbar">💰 Thu Chi</mat-toolbar>
+        <div class="brand">
+          <span class="brand-logo">💰</span>
+          <span class="brand-name">Thu Chi</span>
+        </div>
         <mat-nav-list>
           @for (item of menu; track item.route) {
             <a mat-list-item [routerLink]="item.route" routerLinkActive="active-link"
-               (click)="(isHandset$ | async) && drawer.close()">
+               (click)="closeOnHandset(drawer)">
               <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
               <span matListItemTitle>{{ item.label }}</span>
             </a>
@@ -38,7 +41,7 @@ import { ThemeService } from '../../core/theme.service';
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>
-        <mat-toolbar color="primary" class="app-toolbar">
+        <mat-toolbar class="app-toolbar">
           @if (isHandset$ | async) {
             <button mat-icon-button (click)="drawer.toggle()">
               <mat-icon>menu</mat-icon>
@@ -69,10 +72,22 @@ import { ThemeService } from '../../core/theme.service';
   `,
   styles: [`
     .layout-container { height: 100vh; }
-    .sidenav { width: 230px; }
-    .active-link { background: rgba(25, 118, 210, 0.12); }
+    .sidenav { width: 250px; border-right: none; }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      padding: 20px 16px 12px;
+    }
+    .brand-logo { font-size: 28px; line-height: 1; }
+    .brand-name { font-size: 20px; font-weight: 600; }
+    .app-toolbar {
+      background: var(--primary-gradient);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .app-toolbar span:first-of-type { font-weight: 500; }
     .user-info { padding: 8px 16px; display: flex; flex-direction: column; }
-    .user-info small { color: gray; }
+    .user-info small { color: var(--text-muted); }
   `]
 })
 export class LayoutComponent {
@@ -92,4 +107,10 @@ export class LayoutComponent {
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(map(result => result.matches), shareReplay(1));
+
+  closeOnHandset(drawer: MatSidenav) {
+    if (this.breakpointObserver.isMatched(Breakpoints.Handset)) {
+      drawer.close();
+    }
+  }
 }

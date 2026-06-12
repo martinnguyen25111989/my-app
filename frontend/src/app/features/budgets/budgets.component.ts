@@ -50,7 +50,7 @@ export interface BudgetDialogData {
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Hủy</button>
-      <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">Lưu</button>
+      <button mat-flat-button (click)="save()" [disabled]="form.invalid">Lưu</button>
     </mat-dialog-actions>
   `,
   styles: ['.dialog-form { display: flex; flex-direction: column; gap: 8px; min-width: 300px; padding-top: 8px; }']
@@ -95,7 +95,7 @@ export class BudgetDialogComponent {
             @for (y of years; track y) { <mat-option [value]="y">{{ y }}</mat-option> }
           </mat-select>
         </mat-form-field>
-        <button mat-raised-button color="primary" (click)="openDialog()">
+        <button mat-flat-button (click)="openDialog()">
           <mat-icon>add</mat-icon> Thêm ngân sách
         </button>
       </div>

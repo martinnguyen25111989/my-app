@@ -41,7 +41,7 @@ import { ImportResult, Wallet } from '../../core/models';
             </button>
             <input #fileInput type="file" hidden accept=".csv,.xlsx,.xls" (change)="onFileSelected($event)">
 
-            <button mat-raised-button color="primary" (click)="upload()"
+            <button mat-flat-button (click)="upload()"
                     [disabled]="!file || !walletId || uploading()">
               @if (uploading()) { <mat-spinner diameter="20" /> } @else { <ng-container><mat-icon>upload</mat-icon> Import</ng-container> }
             </button>

@@ -29,7 +29,7 @@ import { TransactionDialogComponent } from './transaction-dialog.component';
       <div class="filter-row">
         <h1>Giao dịch</h1>
         <span class="spacer"></span>
-        <button mat-raised-button color="primary" (click)="openDialog()">
+        <button mat-flat-button (click)="openDialog()">
           <mat-icon>add</mat-icon> Thêm giao dịch
         </button>
       </div>

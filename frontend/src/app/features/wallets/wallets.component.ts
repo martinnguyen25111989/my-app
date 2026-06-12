@@ -55,7 +55,7 @@ const WALLET_ICONS: Record<number, string> = {
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Hủy</button>
-      <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">Lưu</button>
+      <button mat-flat-button (click)="save()" [disabled]="form.invalid">Lưu</button>
     </mat-dialog-actions>
   `,
   styles: ['.dialog-form { display: flex; flex-direction: column; gap: 8px; min-width: 300px; padding-top: 8px; }']
@@ -92,7 +92,7 @@ export class WalletDialogComponent {
       <div class="filter-row">
         <h1>Ví tiền</h1>
         <span class="spacer"></span>
-        <button mat-raised-button color="primary" (click)="openDialog()">
+        <button mat-flat-button (click)="openDialog()">
           <mat-icon>add</mat-icon> Thêm ví
         </button>
       </div>

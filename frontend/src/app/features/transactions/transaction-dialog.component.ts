@@ -82,7 +82,7 @@ export interface TransactionDialogData {
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Hủy</button>
-      <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid || saving()">
+      <button mat-flat-button (click)="save()" [disabled]="form.invalid || saving()">
         Lưu
       </button>
     </mat-dialog-actions>

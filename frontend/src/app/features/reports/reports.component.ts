@@ -36,7 +36,7 @@ import { Report, TransactionType } from '../../core/models';
           <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
           <mat-datepicker #toPicker />
         </mat-form-field>
-        <button mat-raised-button color="primary" (click)="load()">Xem báo cáo</button>
+        <button mat-flat-button (click)="load()">Xem báo cáo</button>
         <button mat-stroked-button (click)="exportFile('excel')" [disabled]="!report()">
           <mat-icon>table_view</mat-icon> Excel
         </button>
