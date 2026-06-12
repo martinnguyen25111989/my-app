@@ -1,5 +1,4 @@
-// Production (GitHub Pages): trỏ về backend trên Render.
-// Sau khi tạo service trên Render, thay URL thật vào đây rồi build lại.
+// Production (GitHub Pages): trỏ về backend trên Hugging Face Spaces.
 export const environment = {
-  apiUrl: 'https://expense-manager-api.onrender.com'
+  apiUrl: 'https://martinnguyen-expense-manager-api.hf.space'
 };
