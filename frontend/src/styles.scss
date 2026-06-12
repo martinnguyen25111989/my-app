@@ -1,0 +1,97 @@
+@use '@angular/material' as mat;
+
+// Styles cấu trúc bắt buộc (CDK overlay, a11y...) — thiếu là dialog/menu/select vỡ layout
+@include mat.core();
+
+// Theme Material 3: light mặc định, dark khi body có class .dark-theme
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$violet-palette
+  ),
+  density: (scale: 0)
+));
+
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$azure-palette,
+    tertiary: mat.$violet-palette
+  )
+));
+
+html {
+  @include mat.all-component-themes($light-theme);
+  --mat-sidenav-content-background-color: var(--bg-color);
+  --mdc-elevated-card-container-shape: 16px;
+  --mdc-outlined-card-container-shape: 16px;
+}
+
+body.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+  --mat-sidenav-content-background-color: var(--bg-color);
+}
+
+html, body { height: 100%; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+  --bg-color: #f3f5fa;
+  --card-bg: #ffffff;
+  --text-color: rgba(0, 0, 0, 0.87);
+  --text-muted: rgba(0, 0, 0, 0.6);
+  --income-color: #2e7d32;
+  --expense-color: #c62828;
+  --primary-gradient: linear-gradient(135deg, #1565c0 0%, #5e35b1 100%);
+}
+
+body.dark-theme {
+  --bg-color: #0f1318;
+  --card-bg: #1c2127;
+  --text-color: rgba(255, 255, 255, 0.92);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --income-color: #66bb6a;
+  --expense-color: #ef5350;
+}
+
+body { background: var(--bg-color); color: var(--text-color); }
+
+.page-container { padding: 24px; max-width: 1200px; margin: 0 auto; }
+.income { color: var(--income-color); font-weight: 500; }
+.expense { color: var(--expense-color); font-weight: 500; }
+.spacer { flex: 1 1 auto; }
+.full-width { width: 100%; }
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 800px) {
+  .chart-grid { grid-template-columns: 1fr; }
+  .page-container { padding: 12px; }
+}
+
+table.mat-mdc-table { width: 100%; }
+.mat-mdc-row:hover { background: rgba(127, 127, 127, 0.07); }
+.table-card { overflow-x: auto; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 12px; }
+
+// Sidenav: item bo tròn kiểu M3
+mat-nav-list a.mat-mdc-list-item {
+  border-radius: 24px;
+  margin: 2px 10px;
+  width: auto;
+}
+mat-nav-list a.active-link {
+  background: rgba(66, 133, 244, 0.16);
+  font-weight: 600;
+}

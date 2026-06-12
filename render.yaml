@@ -1,0 +1,27 @@
+# Blueprint deploy backend lên Render (https://render.com)
+# Cách dùng: Dashboard → New → Blueprint → chọn repo này → Apply
+services:
+  - type: web
+    name: expense-manager-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      # Connection string Postgres (Neon) — dán khi Render hỏi, định dạng .NET/Npgsql:
+      # Host=...;Database=...;Username=...;Password=...;SSL Mode=Require
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: Jwt__Secret
+        generateValue: true
+      - key: Jwt__Issuer
+        value: ExpenseManager
+      - key: Jwt__Audience
+        value: ExpenseManagerClient
+      - key: Cors__AllowedOrigins__0
+        value: https://martinnguyen25111989.github.io
+      - key: Cors__AllowedOrigins__1
+        value: http://localhost:4200
